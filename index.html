@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ad Detective: Stop the Press!</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body data-chapter="1">
+
+  <!-- ===== 顶部栏 ===== -->
+  <header class="topbar">
+    <h1 class="title">Ad Detective: <span class="title-tag">Stop the Press!</span></h1>
+
+    <nav class="journey" aria-label="Chapter journey">
+      <button type="button" class="step-pill active" data-jump="0">✏️ Ch1 · Stationery</button>
+      <span class="step-arrow" aria-hidden="true">➔</span>
+      <button type="button" class="step-pill" data-jump="1">🍔 Ch2 · Diner</button>
+      <span class="step-arrow" aria-hidden="true">➔</span>
+      <button type="button" class="step-pill" data-jump="2">👟 Ch3 · Sneakers</button>
+    </nav>
+
+    <div class="top-right">
+      <p class="score-badge" id="score-badge">⭐ <span id="score-val">0</span></p>
+      <p class="trust-badge" id="trust-badge">Trust: <span id="trust-val">100</span>%</p>
+      <button type="button" class="btn small" id="bgm-btn" title="Toggle Background Music">🎵 BGM: ON</button>
+      <button type="button" class="btn small" id="reset-btn">Reset</button>
+    </div>
+  </header>
+
+  <main class="game">
+
+    <!-- ===== 上半部分：动态商店舞台 + Riley ===== -->
+    <section class="stage" aria-label="Shop stage">
+      <div class="wall" id="wall">
+        <!-- 商店背景 SVG 装饰层 -->
+        <div class="scene-props" id="scene-props" aria-hidden="true"></div>
+
+        <!-- 浮动加分 / 扣血 / 彩带特效层 -->
+        <div class="fx-layer" id="fx-layer" aria-hidden="true"></div>
+
+        <!-- 街道转场动画层 -->
+        <div class="street-wipe" id="street-wipe" hidden>
+          <span class="wipe-runner" aria-hidden="true">🏃‍♂️💨</span>
+          <span class="wipe-label" id="wipe-label">Next stop: Sizzle Diner!</span>
+        </div>
+
+        <div class="screen" id="screen">
+          <div class="screen-bar">
+            <span class="live-dot" aria-hidden="true"></span>
+            <span id="feed-name">INK &amp; PAPER · WINDOW POSTER</span>
+            <span class="timer-badge" id="timer-badge" hidden>⏱️ 15s</span>
+            <span class="sponsor" id="sponsor"></span>
+          </div>
+          <div class="screen-body">
+            <div class="screen-top-row">
+              <span class="stamp" id="stamp">WHAT IT SAYS</span>
+              <span class="clue-pill" id="clue-pill"></span>
+            </div>
+
+            <p class="ad-text" id="ad-text"></p>
+
+            <!-- Ch2 语音跳动声波条 -->
+            <div class="soundwave" id="soundwave" hidden aria-hidden="true">
+              <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+            </div>
+
+            <div class="ch-tools" id="ch-tools" hidden></div>
+            <p class="brand"><span class="brand-icon" aria-hidden="true"></span><span id="brand"></span></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Riley 立绘 -->
+      <aside class="riley" aria-label="Riley, a student reader">
+        <p class="bubble" id="bubble" hidden></p>
+        <svg viewBox="0 0 200 230" aria-hidden="true">
+          <path d="M25 230 Q30 172 100 166 Q170 172 175 230 Z" fill="#b9acdf" stroke="#1d1f45" stroke-width="5"/>
+          <rect x="88" y="146" width="24" height="26" fill="#d9a074" stroke="#1d1f45" stroke-width="4"/>
+          <path d="M76 170 Q100 192 124 170" fill="#8a7cc4" stroke="#1d1f45" stroke-width="4"/>
+          <circle cx="100" cy="112" r="46" fill="#d9a074" stroke="#1d1f45" stroke-width="5"/>
+          <circle cx="100" cy="58" r="16" fill="#1d1f45"/>
+          <path d="M54 114 Q48 62 100 62 Q152 62 146 114 Q140 86 112 82 Q90 94 62 94 Q56 102 54 114 Z" fill="#1d1f45"/>
+          <circle cx="82" cy="116" r="5" fill="#1d1f45"/>
+          <circle cx="118" cy="116" r="5" fill="#1d1f45"/>
+          <path id="brow-l" d="M70 102 L92 100" stroke="#1d1f45" stroke-width="5" stroke-linecap="round" fill="none"/>
+          <path id="brow-r" d="M108 100 L130 102" stroke="#1d1f45" stroke-width="5" stroke-linecap="round" fill="none"/>
+          <circle cx="72" cy="132" r="7" fill="#e8907e" opacity=".5"/>
+          <circle cx="128" cy="132" r="7" fill="#e8907e" opacity=".5"/>
+          <path id="mouth" d="M88 140 Q100 148 112 140" stroke="#1d1f45" stroke-width="5" stroke-linecap="round" fill="none"/>
+          <rect x="126" y="196" width="40" height="17" rx="3" fill="#fffaf0" stroke="#1d1f45" stroke-width="3"/>
+          <text x="146" y="208.5" font-size="10" font-weight="900" text-anchor="middle" fill="#1d1f45" font-family="sans-serif">PRESS</text>
+        </svg>
+        <span class="name-tag">Riley · reader</span>
+      </aside>
+    </section>
+
+    <!-- ===== 下半部分：编辑桌 ===== -->
+    <section class="desk" aria-label="Editor's desk">
+      <div class="desk-top">
+        <span class="step-tag" id="step-tag">STEP 1 · SPOT THE TRICK</span>
+        <h2 class="instruction" id="instruction" tabindex="-1"></h2>
+      </div>
+
+      <!-- 第 1 步：找出可疑的词 -->
+      <div class="act" data-act="1">
+        <p class="lesson" id="spot-lesson" hidden></p>
+        <button type="button" class="btn primary" id="open-file-btn" disabled>Check the real facts ➔</button>
+      </div>
+
+      <!-- 第 2 步：看便利贴档案，给套路贴标签 -->
+      <div class="act" data-act="2" hidden>
+        <ul class="file" id="file-list" aria-label="Case file"></ul>
+        <div class="answer-row" id="answer-row" role="group" aria-label="Your answer"></div>
+        <p class="lesson" id="file-lesson" hidden></p>
+        <button type="button" class="btn primary" id="to-headline-btn" hidden>Fix the ad ➔</button>
+      </div>
+
+      <!-- 第 3 步：选修复标题 -->
+      <div class="act act-3" data-act="3" hidden>
+        <div class="strips" id="strips"></div>
+        <div class="right-group">
+          <p class="facts" id="facts"></p>
+          <ul class="checks" id="checks" aria-label="Publishing checks">
+            <li data-check="fact"><span class="check-mark" aria-hidden="true">?</span> 100% backed by facts</li>
+            <li data-check="action"><span class="check-mark" aria-hidden="true">?</span> Clear &amp; helpful to readers</li>
+          </ul>
+          <button type="button" class="btn primary" id="publish-btn" disabled>Publish Fix ✨</button>
+          <p class="note" id="note" hidden></p>
+        </div>
+      </div>
+
+      <!-- 第 4 步：前后对比 -->
+      <div class="act" data-act="4" hidden>
+        <div class="compare">
+          <div class="compare-card before">
+            <span class="compare-label">Before (Trick Ad)</span>
+            <p class="compare-text" id="before-text"></p>
+            <p class="compare-why" id="before-why"></p>
+          </div>
+          <div class="compare-card after">
+            <span class="compare-label">After (Honest Ad)</span>
+            <p class="compare-text" id="after-text"></p>
+            <p class="compare-why" id="after-why"></p>
+          </div>
+        </div>
+        <div class="button-row">
+          <button type="button" class="btn" id="write-btn">✍️ Write your own</button>
+          <button type="button" class="btn primary next-btn">Next shop ➔</button>
+        </div>
+      </div>
+
+      <!-- 第 5 步：自己写标题 -->
+      <div class="act" data-act="5" hidden>
+        <label class="facts" for="own-input" id="own-facts"></label>
+        <form class="write-form" id="own-form">
+          <input id="own-input" type="text" maxlength="65" autocomplete="off" placeholder="Type an honest headline…">
+          <button type="submit" class="btn">Put on screen ✨</button>
+        </form>
+        <p class="note" id="own-note" hidden></p>
+        <div class="button-row">
+          <button type="button" class="btn primary next-btn">Next shop ➔</button>
+        </div>
+      </div>
+
+      <!-- 结尾：成绩单 -->
+      <div class="act" data-act="6" hidden>
+        <ol class="summary" id="summary"></ol>
+        <p class="lesson" id="final-rank"></p>
+        <button type="button" class="btn primary" id="again-btn">Play again</button>
+      </div>
+    </section>
+  </main>
+
+  <p class="sr-only" id="live" aria-live="polite"></p>
+  <script src="game.js"></script>
+</body>
+<!-- 遊戲動態封面（自帶點擊事件，100% 必進遊戲） -->
+<div id="cover-screen" class="cover-screen" onclick="this.classList.add('is-hidden'); setTimeout(() => this.style.display='none', 550);">
+  <div class="cover-bg-wrap">
+    <img src="cover.png" alt="Ad Detective: Stop the Press!" class="cover-img" />
+    <div class="cover-shine"></div>
+    <div class="cover-tap-hint">點擊任意位置或 Start Game 開始 ▶</div>
+  </div>
+</div>
+</div>
+</html>
